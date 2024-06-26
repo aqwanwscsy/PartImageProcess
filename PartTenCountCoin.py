@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 # 读取彩色图像
-color_img = cv2.imread('img/coin2.jpg')
+color_img = cv2.imread('img/cells.jpg')
 
 
 
@@ -21,17 +21,22 @@ gray_img = cv2.cvtColor(color_img, cv2.COLOR_BGR2GRAY)
 # cv2.imshow('test', gray_img)
 # cv2.waitKey(0)
 
+'''attention:这里是灰度反转,如果需要数的全部变白了可以用'''
+gray_img = 255 - gray_img
+
+
+
 # 对灰度图像进行高斯模糊
-gray_img = cv2.GaussianBlur(gray_img, (15, 15), 5)
+gray_img = cv2.GaussianBlur(gray_img, (5, 5), 0)
 
 # 使用Otsu阈值化方法进行二值化
-_, thresh = cv2.threshold(gray_img, 40, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+_, thresh = cv2.threshold(gray_img, 80, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
 # 创建一个5x5的核进行膨胀操作
 kernel = np.ones((5, 5), np.uint8)
 
 # 对二值图像进行膨胀操作
-dilated_img = cv2.erode(thresh, kernel, iterations = 3)
+dilated_img = cv2.erode(thresh, kernel, iterations = 0)
 
 # 显示膨胀后的图像
 cv2.imshow('Dilated Image', dilated_img)
@@ -54,7 +59,7 @@ for i, cnt in enumerate(contours):
 
     # 根据面积和形状过滤掉方形干扰物（例如，面积大于某个阈值且长宽比接近1的轮廓）
     aspect_ratio = float(w) / h
-    if area > 1 :  # 只考虑面积大于5的轮廓
+    if area > 260 :  # 只考虑面积大于5的轮廓
         cell_count += 1
         x, y, w, h = cv2.boundingRect(cnt)
         cv2.rectangle(marked_img, (x, y), (x + w, y + h), (0, 255, 0), 2)
